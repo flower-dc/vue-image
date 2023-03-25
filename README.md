@@ -1,2 +1,3 @@
-# vue-image
-vue image Viewer &amp; Copper
+TODO
+
+- [ ] 已知问题，图片中心点超过画布则截取的画面不正确
