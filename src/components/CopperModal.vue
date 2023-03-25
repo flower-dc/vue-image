@@ -60,7 +60,9 @@ export default defineComponent({
       setup() {
         return () => (
           <div class="text-right">
-            <NButton onClick={handleClose}>关闭</NButton>
+            <NButton class="mr-10" onClick={handleClose}>
+              关闭
+            </NButton>
             <NButton type="primary" onClick={handleCop}>
               确认
             </NButton>

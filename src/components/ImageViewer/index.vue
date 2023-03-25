@@ -36,19 +36,8 @@ export default defineComponent({
 
     const currentImage = computed(() => images.value[currentIndex.value]);
 
-    const loadImage = () => {
-      //   const img = new Image()
-      //   img.src = currentImage.value
-      //   img.onload = () => {
-      //     const { width, height } = img
-      //     const { innerWidth, innerHeight } = window
-      //     const ratio = Math.min(innerWidth / width, innerHeight / height)
-      //     scale.value = ratio
-      //   }
-    };
-
-    const setVisible = (e: MouseEvent) => {
-      e.preventDefault();
+    const setVisible = () => {
+      if (!currentImage.value) return;
       visible.value = !visible.value;
       if (!visible.value) {
         viewerRef.value?.resetState();

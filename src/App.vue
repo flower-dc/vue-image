@@ -3,8 +3,10 @@ import { NAvatar, NButton } from "naive-ui";
 import { ref } from "vue";
 
 import CopperModal, { ICopperState } from "./components/CopperModal.vue";
+import ImageViewer from "./components/ImageViewer/index.vue";
+import Avatar from "./assets//images/avatar.jpg";
 
-const avatar = ref();
+const avatar = ref(Avatar);
 
 const copperModalRef = ref<ICopperState | null>(null);
 
@@ -14,9 +16,9 @@ const handleCopped = ({ blob, res }: { blob: Blob | null; res: string }) => {
 </script>
 
 <template>
-  <div>
+  <div flex="~" items="~ center" justify="~ center">
     <ImageViewer :urls="avatar">
-      <n-avatar round :size="78" :src="avatar" />
+      <n-avatar :size="68" :src="avatar" />
     </ImageViewer>
 
     <n-button type="primary" class="ml-40" @click="() => copperModalRef!.open()"
