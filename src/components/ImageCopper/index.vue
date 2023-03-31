@@ -92,7 +92,7 @@ export default defineComponent({
           <NButton
             text
             class="text-[30px] leading-30"
-            onClick={() => viewerRef.value?.setScale(-0.1)}
+            onClick={() => viewerRef.value?.setScale(-0.03)}
           >
             <NIcon class="text-[30px] leading-30">
               <Remove />
@@ -101,7 +101,7 @@ export default defineComponent({
           <NButton
             class="text-[30px] leading-30"
             text
-            onClick={() => viewerRef.value?.setScale(0.1)}
+            onClick={() => viewerRef.value?.setScale(0.03)}
           >
             <NIcon class="text-[30px] leading-30">
               <Add />

@@ -80,6 +80,8 @@ export default defineComponent({
     };
 
     const handleMousemove = (x: number, y: number) => {
+      if (isOutside.value) return;
+
       const deltaX = x - lastMouseX;
       const deltaY = y - lastMouseY;
 
@@ -101,10 +103,13 @@ export default defineComponent({
       }
     );
 
-    const setScale = (scale = 0.1) => {
-      if (_sx <= 0.2 && scale < 0) return;
-      // _sx = (_sx + scale).toFixed(1) * 1
+    const setScale = (scale = 0.03) => {
       _sx += scale;
+
+      if (_sx <= 0.2 && scale < 0) {
+        _sx = 0.2;
+      }
+
       sx.value = sy.value = _sx + "";
     };
 
@@ -114,6 +119,7 @@ export default defineComponent({
     };
 
     const resetState = () => {
+      transition.value = 0.5;
       sx.value = "1";
       sy.value = "1";
       _sx = 1;
@@ -124,6 +130,7 @@ export default defineComponent({
     };
 
     const resetOffset = () => {
+      transition.value = 0.5;
       _ux = 0;
       _uy = 0;
       ux.value = `0px`;
@@ -145,11 +152,9 @@ export default defineComponent({
           (isOutside && mode === "viewer") ||
           (!pressed && mode === "viewer")
         ) {
-          transition.value = 0.5;
           resetOffset();
         }
-      },
-      { immediate: true, deep: true }
+      }
     );
 
     expose({
