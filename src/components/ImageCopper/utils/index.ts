@@ -1,9 +1,7 @@
-export const getCanvasBlob = (
-  canvas: HTMLCanvasElement
-): Promise<Blob | null> =>
-  new Promise(function (resolve, reject) {
+export const canvas2Blob = (canvas: HTMLCanvasElement): Promise<Blob | null> =>
+  new Promise(function (resolve) {
     canvas.toBlob(function (blob) {
-      if (!blob) return reject(null);
+      if (!blob) return resolve(null);
       resolve(blob);
     });
   });

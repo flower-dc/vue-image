@@ -7,7 +7,7 @@ export interface ICopper {
 }
 import { NButton, NIcon } from "naive-ui";
 import { defineComponent, toRefs, ref } from "vue";
-import { getCanvasBlob, loadImage } from "./utils";
+import { canvas2Blob, loadImage } from "./utils";
 import { Add, Remove, Refresh } from "@vicons/ionicons5";
 
 import Viewer, { ViewerState } from "../ImageViewer/Viewer.vue";
@@ -37,9 +37,6 @@ export default defineComponent({
       const image = await loadImage(url.value!);
       const { scale, x, y } = viewerRef.value!.getState();
 
-      // const dfY = image.height <= height.value ? 0 : ((image.height * scale - height.value * scale) / 2) * scale
-      // const dfX = image.width <= width.value ? 0 : ((image.width * scale - width.value * scale) / 2) * scale
-
       // TODO 已知问题，图片中心点超过画布则截取的画面不正确
       const dx =
         x * scale - (image.width * scale - x * scale) / 2 + width.value / 2;
@@ -59,7 +56,7 @@ export default defineComponent({
 
       const res = canvas.toDataURL("image/png");
 
-      const blob = await getCanvasBlob(canvas);
+      const blob = await canvas2Blob(canvas);
 
       return { blob, res };
     };
