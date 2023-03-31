@@ -4,13 +4,13 @@ import { ref } from "vue";
 
 import CopperModal, { ICopperState } from "./components/CopperModal.vue";
 import ImageViewer from "./components/ImageViewer/index.vue";
-import Avatar from "./assets//images/avatar.jpg";
+import Avatar from "./assets/images/avatar.png";
 
 const avatar = ref(Avatar);
 
 const copperModalRef = ref<ICopperState | null>(null);
 
-const handleCopped = ({ blob, res }: { blob: Blob | null; res: string }) => {
+const handleCopped = ({ res }: { res: string }) => {
   avatar.value = res;
 };
 </script>
