@@ -68,13 +68,10 @@ export default defineComponent({
     const handleWheel = (e: WheelEvent) => {
       transition.value = 0;
       e.preventDefault();
+
       const deltaY = e.deltaY / 1000;
 
-      if (deltaY > 0) {
-        setScale(-0.1);
-      } else {
-        setScale(0.1);
-      }
+      setScale(-deltaY);
     };
 
     const handleMouseup = (e: MouseEvent) => {
@@ -98,13 +95,14 @@ export default defineComponent({
     watch(
       () => [x.value, y.value, pressed.value],
       ([x, y, pressed]) => {
-        if (!pressed) return;
-        handleMousemove(x as number, y as number);
+        if (pressed) {
+          handleMousemove(x as number, y as number);
+        }
       }
     );
 
     const setScale = (scale = 0.1) => {
-      if (_sx <= 0.5 && scale < 0) return;
+      if (_sx <= 0.2 && scale < 0) return;
       // _sx = (_sx + scale).toFixed(1) * 1
       _sx += scale;
       sx.value = sy.value = _sx + "";
