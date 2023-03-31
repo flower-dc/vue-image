@@ -37,11 +37,10 @@ export default defineComponent({
       const image = await loadImage(url.value!);
       const { scale, x, y } = viewerRef.value!.getState();
 
-      // TODO 已知问题，图片中心点超过画布则截取的画面不正确
       const dx =
         // x * scale - (image.width * scale - x * scale) / 2 + width.value / 2;
         x - (image.width * scale - width.value) / 2;
-      const dy = 
+      const dy =
         // y * scale - (image.height * scale - y * scale) / 2 + height.value / 2;
         y - (image.height * scale - height.value) / 2;
 
@@ -55,15 +54,19 @@ export default defineComponent({
 
       const ctx = canvas.getContext("2d")!;
       ctx.drawImage(image, dx, dy, dWidth, dHeight);
-      
-       // 方法二
-      // ctx.drawImage(image, 
-      //   (image.width / 2 - width.value / scale / 2) - x / scale,
-      //   (image.height / 2 - height.value / scale / 2) - y / scale, 
-      //   canvas.width / scale, 
-      //   canvas.height / scale, 
-      //   0, 0, 
-      //   canvas.width, canvas.height);
+
+      // 方法二
+      // ctx.drawImage(
+      //   image,
+      //   image.width / 2 - width.value / scale / 2 - x / scale,
+      //   image.height / 2 - height.value / scale / 2 - y / scale,
+      //   canvas.width / scale,
+      //   canvas.height / scale,
+      //   0,
+      //   0,
+      //   canvas.width,
+      //   canvas.height
+      // );
 
       const res = canvas.toDataURL("image/png");
 
