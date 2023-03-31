@@ -82,19 +82,26 @@ export default defineComponent({
       transition.value = 0.5;
     };
 
-    const handleMousemove = () => {
-      if (!pressed.value) return;
-      const deltaX = x.value - lastMouseX;
-      const deltaY = y.value - lastMouseY;
+    const handleMousemove = (x: number, y: number) => {
+      const deltaX = x - lastMouseX;
+      const deltaY = y - lastMouseY;
 
       _ux += deltaX;
       _uy += deltaY;
 
       ux.value = `${_ux}px`;
       uy.value = `${_uy}px`;
-      lastMouseX = x.value;
-      lastMouseY = y.value;
+      lastMouseX = x;
+      lastMouseY = y;
     };
+
+    watch(
+      () => [x.value, y.value, pressed.value],
+      ([x, y, pressed]) => {
+        if (!pressed) return;
+        handleMousemove(x as number, y as number);
+      }
+    );
 
     const setScale = (scale = 0.1) => {
       if (_sx <= 0.5 && scale < 0) return;
@@ -163,7 +170,6 @@ export default defineComponent({
         onWheel={handleWheel}
         onMousedown={handleMousedown}
         onMouseup={handleMouseup}
-        onMousemove={handleMousemove}
       >
         <img
           ref={imageRef}
