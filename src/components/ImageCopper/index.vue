@@ -37,15 +37,11 @@ export default defineComponent({
       const image = await loadImage(url.value!);
       const { scale, x, y } = viewerRef.value!.getState();
 
-      const dx =
-        // x * scale - (image.width * scale - x * scale) / 2 + width.value / 2;
-        x - (image.width * scale - width.value) / 2;
-      const dy =
-        // y * scale - (image.height * scale - y * scale) / 2 + height.value / 2;
-        y - (image.height * scale - height.value) / 2;
-
       const dWidth = image.width * scale;
       const dHeight = image.height * scale;
+
+      const dx = x - (dWidth - width.value) / 2;
+      const dy = y - (dHeight - height.value) / 2;
 
       const canvas = document.createElement("canvas");
 

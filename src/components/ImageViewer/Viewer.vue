@@ -1,9 +1,11 @@
 <script lang="tsx">
 import { Ref, defineComponent, ref, toRefs, watch } from "vue";
+import { getImageRect } from "./utils";
 
 export interface State {
   (): {
     scale: number;
+    rotate: number;
     x: number;
     y: number;
   };
@@ -35,8 +37,8 @@ export default defineComponent({
   setup(props, { expose }) {
     const { url, mode } = toRefs(props);
 
-    const viewerRef = ref(null);
-    const imageRef = ref(null);
+    const viewerRef = ref<HTMLDivElement | null>(null);
+    const imageRef = ref<HTMLImageElement | null>(null);
 
     // 使用unocss的cssVar
     const ux = useCssVar("--un-translate-x", imageRef);
@@ -55,6 +57,27 @@ export default defineComponent({
 
     let lastMouseX = x.value;
     let lastMouseY = y.value;
+
+    let initialScale = 1;
+
+    const setInitialScale = (n: number) => {
+      return props.mode === "copper" ? n : n * 0.8;
+    };
+
+    const getMinScale = () => {
+      return props.mode === "copper" ? initialScale : initialScale * 0.2;
+    };
+
+    const createInitialScale = async () => {
+      const { width, height } = await getImageRect(props.url!);
+      const { clientHeight, clientWidth } = viewerRef.value!;
+
+      const scale = setInitialScale(
+        Math.min(clientWidth / width, clientHeight / height)
+      );
+
+      return scale;
+    };
 
     const transition = ref(0);
 
@@ -94,6 +117,14 @@ export default defineComponent({
       lastMouseY = y;
     };
 
+    const handleLoadImage = async () => {
+      const scale = await createInitialScale();
+
+      _sx = initialScale = scale;
+
+      sx.value = sy.value = `${scale}`;
+    };
+
     watch(
       () => [x.value, y.value, pressed.value],
       ([x, y, pressed]) => {
@@ -104,10 +135,12 @@ export default defineComponent({
     );
 
     const setScale = (scale = 0.03) => {
+      const minScale = getMinScale();
+
       _sx += scale;
 
-      if (_sx <= 0.2 && scale < 0) {
-        _sx = 0.2;
+      if (_sx <= minScale && scale < 0) {
+        _sx = minScale;
       }
 
       sx.value = sy.value = _sx + "";
@@ -120,13 +153,14 @@ export default defineComponent({
 
     const resetState = () => {
       transition.value = 0.5;
-      sx.value = "1";
-      sy.value = "1";
-      _sx = 1;
-      _ux = 0;
-      _uy = 0;
-      ux.value = `0px`;
-      uy.value = `0px`;
+
+      sy.value = sx.value = initialScale + "";
+
+      _sx = initialScale;
+
+      _r = _uy = _ux = 0;
+
+      uy.value = ux.value = `0px`;
     };
 
     const resetOffset = () => {
@@ -140,6 +174,7 @@ export default defineComponent({
     const getState = () => {
       return {
         scale: _sx,
+        rotate: _r,
         x: _ux,
         y: _uy,
       };
@@ -179,6 +214,7 @@ export default defineComponent({
           src={url.value}
           class="transform cursor-move"
           style={{ transition: `${transition.value}s` }}
+          onLoad={handleLoadImage}
         />
       </div>
     );
