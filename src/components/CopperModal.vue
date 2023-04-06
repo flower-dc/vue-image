@@ -1,11 +1,8 @@
 <script lang="tsx">
-export interface ICopperState {
-  open: () => void;
-}
 import { NButton, NModal } from "naive-ui";
 import { defineComponent, ref } from "vue";
 
-import ImageCopper, { ICopper } from "~/components/ImageCopper/index.vue";
+import ImageCopper from "~/components/ImageCopper/index";
 
 export default defineComponent({
   name: "CopperModal",

@@ -2,8 +2,8 @@
 import { NAvatar, NButton } from "naive-ui";
 import { ref } from "vue";
 
-import CopperModal, { ICopperState } from "./components/CopperModal.vue";
-import ImageViewer from "./components/ImageViewer/index.vue";
+import CopperModal from "./components/CopperModal.vue";
+import ImageViewer from "./components/ImageViewer/index";
 import Avatar from "./assets/images/avatar.png";
 
 const avatar = ref(Avatar);

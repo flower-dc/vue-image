@@ -1,4 +1,4 @@
-import { loadImage } from "../ImageCopper/utils";
+import { loadImage } from "~/components/ImageCopper/src/utils";
 
 const _generateWidthRemoveImage = async (src: string) => {
   const image = await loadImage(src);

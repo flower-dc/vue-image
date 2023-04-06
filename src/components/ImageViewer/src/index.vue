@@ -1,15 +1,15 @@
 <script lang="tsx">
-import { toRefs, ref, computed, defineComponent } from "vue";
+import { toRefs, ref, computed, defineComponent, PropType } from "vue";
 import { ArrowBackCircle, Close } from "@vicons/ionicons5";
 import { NIcon } from "naive-ui";
 
-import Viewer, { ViewerState } from "./Viewer.vue";
+import Viewer from "./components/Viewer.vue";
 
 export default defineComponent({
   name: "ImageViewer",
   props: {
     urls: {
-      type: [String, Array],
+      type: [String, Array] as PropType<string | string[]>,
       default: undefined,
     },
   },
@@ -18,7 +18,7 @@ export default defineComponent({
 
     const visible = ref(false);
 
-    const viewerRef = ref<ViewerState | null>(null);
+    const viewerRef = ref<IImageViewerState | null>(null);
 
     const currentIndex = ref(0);
 

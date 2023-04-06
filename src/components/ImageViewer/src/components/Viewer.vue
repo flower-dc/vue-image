@@ -1,24 +1,6 @@
 <script lang="tsx">
-import { Ref, defineComponent, ref, toRefs, watch } from "vue";
-import { getImageRect } from "./utils";
-
-export interface State {
-  (): {
-    scale: number;
-    rotate: number;
-    x: number;
-    y: number;
-  };
-}
-
-export interface ViewerState {
-  resetState: () => void;
-  getState: State;
-  setScale: (scale?: number) => void;
-  setRotate: (rotate?: number) => void;
-  viewerRef: Ref<HTMLDivElement>;
-  imageRef: Ref<HTMLImageElement>;
-}
+import { defineComponent, ref, toRefs, watch } from "vue";
+import { getImageRect } from "../utils";
 
 import { useMousePressed, useMouseInElement, useCssVar } from "@vueuse/core";
 
@@ -64,8 +46,8 @@ export default defineComponent({
       return props.mode === "copper" ? n : n * 0.8;
     };
 
-    const getMinScale = () => {
-      return props.mode === "copper" ? initialScale : initialScale * 0.2;
+    const getMinScale = (n: number) => {
+      return props.mode === "copper" ? n : n * 0.2;
     };
 
     const createInitialScale = async () => {
@@ -113,6 +95,7 @@ export default defineComponent({
 
       ux.value = `${_ux}px`;
       uy.value = `${_uy}px`;
+
       lastMouseX = x;
       lastMouseY = y;
     };
@@ -135,7 +118,7 @@ export default defineComponent({
     );
 
     const setScale = (scale = 0.03) => {
-      const minScale = getMinScale();
+      const minScale = getMinScale(initialScale);
 
       _sx += scale;
 
@@ -147,6 +130,7 @@ export default defineComponent({
     };
 
     const setRotate = (rotate = 45) => {
+      transition.value = 0.5;
       _r += rotate;
       r.value = `${_r}deg`;
     };
@@ -155,20 +139,19 @@ export default defineComponent({
       transition.value = 0.5;
 
       sy.value = sx.value = initialScale + "";
-
       _sx = initialScale;
 
       _r = _uy = _ux = 0;
+      r.value = _r + "deg";
 
       uy.value = ux.value = `0px`;
     };
 
     const resetOffset = () => {
       transition.value = 0.5;
-      _ux = 0;
-      _uy = 0;
-      ux.value = `0px`;
-      uy.value = `0px`;
+
+      _uy = _ux = 0;
+      uy.value = ux.value = `0px`;
     };
 
     const getState = () => {
