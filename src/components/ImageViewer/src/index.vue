@@ -4,6 +4,7 @@ import { ArrowBackCircle, Close } from "@vicons/ionicons5";
 import { NIcon } from "naive-ui";
 
 import Viewer from "./components/Viewer.vue";
+import Toolbar from "./components/Toolbar.vue";
 
 export default defineComponent({
   name: "ImageViewer",
@@ -45,12 +46,14 @@ export default defineComponent({
     };
 
     const next = (n = 1) => {
-      if (
-        (currentIndex.value >= images.value.length - 1 && n > 0) ||
-        (currentIndex.value <= 0 && n < 0)
-      )
-        return;
       viewerRef.value?.resetState();
+
+      if (currentIndex.value >= images.value.length - 1 && n > 0)
+        return (currentIndex.value = 0);
+
+      if (currentIndex.value <= 0 && n < 0)
+        return (currentIndex.value = images.value.length - 1);
+
       currentIndex.value += n;
     };
 
@@ -62,26 +65,34 @@ export default defineComponent({
             <NIcon size={40} class="image-viewer__close" onClick={setVisible}>
               <Close />
             </NIcon>
+
+            <div class="image-viewer__toolbar">
+              <Toolbar
+                onReset={() => viewerRef.value?.resetState()}
+                onScaleDec={() => viewerRef.value?.setScale(-0.03)}
+                onScaleInc={() => viewerRef.value?.setScale(0.03)}
+                onRotateForward={() => viewerRef.value?.setRotate(90)}
+                onRotateNegative={() => viewerRef.value?.setRotate(-90)}
+              />
+            </div>
+
             {isMultiple.value && (
               <>
-                {currentIndex.value > 0 && (
-                  <NIcon
-                    size={40}
-                    class="image-viewer__stepper_left cursor-pointer"
-                    onClick={() => next(-1)}
-                  >
-                    <ArrowBackCircle />
-                  </NIcon>
-                )}
-                {images.value?.length - 1 > currentIndex.value && (
-                  <NIcon
-                    size={40}
-                    class="image-viewer__stepper_right cursor-pointer"
-                    onClick={() => next(1)}
-                  >
-                    <ArrowBackCircle />
-                  </NIcon>
-                )}
+                <NIcon
+                  size={40}
+                  class="image-viewer__stepper_left cursor-pointer"
+                  onClick={() => next(-1)}
+                >
+                  <ArrowBackCircle />
+                </NIcon>
+
+                <NIcon
+                  size={40}
+                  class="image-viewer__stepper_right cursor-pointer"
+                  onClick={() => next(1)}
+                >
+                  <ArrowBackCircle />
+                </NIcon>
               </>
             )}
           </div>
@@ -101,6 +112,11 @@ export default defineComponent({
   &__close {
     @apply absolute top-0 right-0 m-20 cursor-pointer transition hover:rotate-90;
   }
+
+  &__toolbar {
+    @apply absolute bottom-20 left-1/2 -translate-x-1/2 px-20 py-10 rounded-[25px]  bg-[rgba(123,123,123,0.5)];
+  }
+
   &__stepper_left,
   &__stepper_right {
     @apply absolute top-1/2 transform;

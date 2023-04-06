@@ -63,25 +63,28 @@ export default defineComponent({
 
     const transition = ref(0);
 
+    const setTransition = (n: number) => {
+      transition.value = n;
+    };
+
     const handleMousedown = (e: MouseEvent) => {
-      transition.value = 0;
+      setTransition(0);
       e.preventDefault();
       lastMouseX = x.value;
       lastMouseY = y.value;
     };
 
     const handleWheel = (e: WheelEvent) => {
-      transition.value = 0;
       e.preventDefault();
 
       const deltaY = e.deltaY / 1000;
 
-      setScale(-deltaY);
+      setScale(-deltaY, false);
     };
 
     const handleMouseup = (e: MouseEvent) => {
       e.preventDefault();
-      transition.value = 0.5;
+      setTransition(0);
     };
 
     const handleMousemove = (x: number, y: number) => {
@@ -117,8 +120,12 @@ export default defineComponent({
       }
     );
 
-    const setScale = (scale = 0.03) => {
+    const setScale = (scale = 0.03, isTransition = true) => {
       const minScale = getMinScale(initialScale);
+
+      isTransition
+        ? !transition.value && setTransition(0.5)
+        : transition.value && setTransition(0);
 
       _sx += scale;
 
@@ -130,13 +137,13 @@ export default defineComponent({
     };
 
     const setRotate = (rotate = 45) => {
-      transition.value = 0.5;
+      setTransition(0.5);
       _r += rotate;
       r.value = `${_r}deg`;
     };
 
     const resetState = () => {
-      transition.value = 0.5;
+      setTransition(0.5);
 
       sy.value = sx.value = initialScale + "";
       _sx = initialScale;
@@ -148,7 +155,7 @@ export default defineComponent({
     };
 
     const resetOffset = () => {
-      transition.value = 0.5;
+      setTransition(0.5);
 
       _uy = _ux = 0;
       uy.value = ux.value = `0px`;
