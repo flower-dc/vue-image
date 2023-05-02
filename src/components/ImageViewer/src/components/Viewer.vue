@@ -79,6 +79,8 @@ export default defineComponent({
 
       const deltaY = e.deltaY / 1000;
 
+      setTransition(0);
+
       setScale(-deltaY, false);
     };
 
@@ -123,9 +125,7 @@ export default defineComponent({
     const setScale = (scale = 0.03, isTransition = true) => {
       const minScale = getMinScale(initialScale);
 
-      isTransition
-        ? !transition.value && setTransition(0.5)
-        : transition.value && setTransition(0);
+      isTransition && !transition.value && setTransition(0.5);
 
       _sx += scale;
 
@@ -202,7 +202,7 @@ export default defineComponent({
         <img
           ref={imageRef}
           src={url.value}
-          class="transform cursor-move"
+          class="transform-gpu cursor-move"
           style={{ transition: `${transition.value}s` }}
           onLoad={handleLoadImage}
         />
