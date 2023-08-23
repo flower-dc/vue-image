@@ -1,7 +1,8 @@
 <script lang="tsx">
 import { toRefs, ref, computed, defineComponent, PropType } from "vue";
 import { ArrowBackCircle, Close } from "@vicons/ionicons5";
-import { NIcon } from "naive-ui";
+import { NIcon, NAvatar } from "naive-ui";
+import { canLoadImage } from './utils'
 
 import Viewer from "./components/Viewer.vue";
 import Toolbar from "./components/Toolbar.vue";
@@ -13,8 +14,12 @@ export default defineComponent({
       type: [String, Array] as PropType<string | string[]>,
       default: undefined,
     },
+    willReset: {
+      type: boolean,
+      default: true,
+    },
   },
-  setup(props, { slots }) {
+  setup(props, { slots, expose }) {
     const { urls } = toRefs(props);
 
     const visible = ref(false);
@@ -37,6 +42,19 @@ export default defineComponent({
 
     const currentImage = computed(() => images.value[currentIndex.value]);
 
+    const open = (e) => {
+      e.preventDefault()
+
+      canLoadImage(currentImage.value).then((res) => {
+        if (res) visible.value = true
+      })
+    }
+
+    const close = () => {
+      visible.value = false
+      viewerRef.value.resetState()
+    }
+
     const setVisible = () => {
       if (!currentImage.value) return;
       visible.value = !visible.value;
@@ -57,12 +75,22 @@ export default defineComponent({
       currentIndex.value += n;
     };
 
+    expose({
+      open: () => canLoadImage(currentImage.value).then(() => {
+          visible.value = true
+        }),
+    })
+
     return () => (
       <>
         {visible.value && (
           <div class="image-viewer">
-            <Viewer url={currentImage.value} ref={viewerRef} />
-            <NIcon size={40} class="image-viewer__close" onClick={setVisible}>
+            <Viewer
+              url={currentImage.value}
+              ref={viewerRef}
+              willReset={props.willReset}
+            />
+            <NIcon size={40} class="image-viewer__close" onClick={close}>
               <Close />
             </NIcon>
 
@@ -97,7 +125,9 @@ export default defineComponent({
             )}
           </div>
         )}
-        <div onClick={setVisible}>{slots?.default?.()}</div>
+        <div onClick={open}>
+          {slots?.default ? slots.default() : <NAvatar {...attrs} size={props.size} src={currentImage.value}></NAvatar>}
+        </div>
       </>
     );
   },
@@ -110,20 +140,22 @@ export default defineComponent({
   backdrop-filter: blur(30px);
 
   &__close {
-    @apply absolute top-0 right-0 m-20 cursor-pointer transition hover:rotate-90;
+    @apply absolute top-0 right-0 m-20 cursor-pointer transition hover: rotate-90;
   }
 
   &__toolbar {
-    @apply absolute bottom-20 left-1/2 -translate-x-1/2 px-20 py-10 rounded-[25px]  bg-[rgba(123,123,123,0.5)];
+    @apply absolute bottom-20 left-1/2 -translate-x-1/2 px-20 py-10 rounded-[25px] bg-[rgba(123, 123, 123, 0.5)];
   }
 
   &__stepper_left,
   &__stepper_right {
     @apply absolute top-1/2 transform;
   }
+
   &__stepper_left {
     @apply left-0;
   }
+
   &__stepper_right {
     @apply right-0 rotate-180;
   }

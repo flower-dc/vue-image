@@ -15,6 +15,10 @@ export default defineComponent({
       type: String,
       default: "viewer", // or copper
     },
+    willReset: {
+      type: boolean,
+      default: true
+    }
   },
   setup(props, { expose }) {
     const { url, mode } = toRefs(props);
@@ -174,8 +178,8 @@ export default defineComponent({
       () => [isOutside.value, mode.value, pressed.value],
       async ([isOutside, mode, pressed]) => {
         if (
-          (isOutside && mode === "viewer") ||
-          (!pressed && mode === "viewer")
+          (isOutside && mode === "viewer" ||
+            !pressed && mode === "viewer") && !props.willReset
         ) {
           resetOffset();
         }
